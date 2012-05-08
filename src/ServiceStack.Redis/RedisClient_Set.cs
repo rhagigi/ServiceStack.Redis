@@ -60,7 +60,11 @@ namespace ServiceStack.Redis
 			}
 			return results;
 		}
-
+        public List<string> GetSortedEntryValues(string setId, SortOptions sortOptions)
+        {
+            var multiDataList = Sort(setId, sortOptions);
+            return multiDataList.ToStringList();
+        }
 		public List<string> GetSortedEntryValues(string setId, int startingFrom, int endingAt)
 		{
 			var sortOptions = new SortOptions { Skip = startingFrom, Take = endingAt, };
