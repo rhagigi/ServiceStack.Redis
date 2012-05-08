@@ -60,6 +60,10 @@ namespace ServiceStack.Redis
 			}
 			return results;
 		}
+        public void StoreSortedEntryValues(string setId, SortOptions sortOptions, string storeResultsAtSetId)
+        {
+            SortStore(setId, sortOptions,storeResultsAtSetId);
+        }
         public List<string> GetSortedEntryValues(string setId, SortOptions sortOptions)
         {
             var multiDataList = Sort(setId, sortOptions);

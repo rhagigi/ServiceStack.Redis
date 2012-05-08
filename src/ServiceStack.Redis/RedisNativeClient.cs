@@ -877,7 +877,45 @@ namespace ServiceStack.Redis
 
             return SendExpectMultiData(Commands.LRange, listId.ToUtf8Bytes(), startingFrom.ToUtf8Bytes(), endingAt.ToUtf8Bytes());
         }
+        public void SortStore(string listOrSetId, SortOptions sortOptions,string intoSetId)
+        {
+            var cmdWithArgs = new List<byte[]>
+           	{
+           		Commands.Sort, listOrSetId.ToUtf8Bytes()
+           	};
 
+            if (sortOptions.SortPattern != null)
+            {
+                cmdWithArgs.Add(Commands.By);
+                cmdWithArgs.Add(sortOptions.SortPattern.ToUtf8Bytes());
+            }
+
+            if (sortOptions.Skip.HasValue || sortOptions.Take.HasValue)
+            {
+                cmdWithArgs.Add(Commands.Limit);
+                cmdWithArgs.Add(sortOptions.Skip.GetValueOrDefault(0).ToUtf8Bytes());
+                cmdWithArgs.Add(sortOptions.Take.GetValueOrDefault(0).ToUtf8Bytes());
+            }
+
+            if (sortOptions.GetPattern != null)
+            {
+                cmdWithArgs.Add(Commands.Get);
+                cmdWithArgs.Add(sortOptions.GetPattern.ToUtf8Bytes());
+            }
+
+            if (sortOptions.SortDesc)
+            {
+                cmdWithArgs.Add(Commands.Desc);
+            }
+
+            if (sortOptions.SortAlpha)
+            {
+                cmdWithArgs.Add(Commands.Alpha);
+            }
+            cmdWithArgs.Add(Commands.Store);
+            cmdWithArgs.Add(sortOptions.StoreAtKey.ToUtf8Bytes());
+            SendExpectSuccess(cmdWithArgs.ToArray());
+        }
         public byte[][] Sort(string listOrSetId, SortOptions sortOptions)
         {
             var cmdWithArgs = new List<byte[]>
